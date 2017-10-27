@@ -1,0 +1,1041 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Git," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="AdamZeng" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="当你编写一个算术表达式如 B*C 时，表达式的形式使你能够正确理解它。在这种情况下，你知道 B 乘以 C, 因为乘法运算符 * 出现在表达式中。这种类型的符号称为中缀，因为运算符在它处理的两个操作数之间。看另外一个中缀示例，A+B*C，运算符 + 和 * 仍然出现在操作数之间。这里面有个问题是，他们分别作用于哪个运算数上，+ 作用于 A 和 B , 还是 * 作用于 B 和 C？表达式似乎有点模糊">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中缀前缀和后缀表达式">
+<meta property="og:url" content="http://yoursite.com/2017/10/27/中缀前缀和后缀表达式/index.html">
+<meta property="og:site_name" content="AdamZeng">
+<meta property="og:description" content="当你编写一个算术表达式如 B*C 时，表达式的形式使你能够正确理解它。在这种情况下，你知道 B 乘以 C, 因为乘法运算符 * 出现在表达式中。这种类型的符号称为中缀，因为运算符在它处理的两个操作数之间。看另外一个中缀示例，A+B*C，运算符 + 和 * 仍然出现在操作数之间。这里面有个问题是，他们分别作用于哪个运算数上，+ 作用于 A 和 B , 还是 * 作用于 B 和 C？表达式似乎有点模糊">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table2.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table3.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table4.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure6.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure7.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure8.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure9.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure10.png">
+<meta property="og:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure11.png">
+<meta property="og:updated_time" content="2017-10-27T09:24:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="中缀前缀和后缀表达式">
+<meta name="twitter:description" content="当你编写一个算术表达式如 B*C 时，表达式的形式使你能够正确理解它。在这种情况下，你知道 B 乘以 C, 因为乘法运算符 * 出现在表达式中。这种类型的符号称为中缀，因为运算符在它处理的两个操作数之间。看另外一个中缀示例，A+B*C，运算符 + 和 * 仍然出现在操作数之间。这里面有个问题是，他们分别作用于哪个运算数上，+ 作用于 A 和 B , 还是 * 作用于 B 和 C？表达式似乎有点模糊">
+<meta name="twitter:image" content="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table2.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '20152154',
+      author: 'Wongzeqi'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/27/中缀前缀和后缀表达式/"/>
+
+
+
+
+
+  <title>中缀前缀和后缀表达式 | AdamZeng</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <a href="https://github.com/AdamZeng1"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AdamZeng</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">start from zero</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/27/中缀前缀和后缀表达式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="AdamZeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/upload/head.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AdamZeng">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">中缀前缀和后缀表达式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-27T17:13:24+08:00">
+                2017-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/GIT/" itemprop="url" rel="index">
+                    <span itemprop="name">GIT</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+				<!--noindex-->
+				<span class="post-comments-count">
+				<span class="post-meta-divider">|</span>
+				<span class="post-meta-item-icon">
+				  <i class="fa fa-comment-o"></i>
+				</span>
+				
+					<a href="/2017/10/27/中缀前缀和后缀表达式/#SOHUCS" itemprop="discussionUrl">
+					  <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2017/10/27/中缀前缀和后缀表达式/" itemprop="commentsCount"></span>
+					</a>
+				
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>当你编写一个算术表达式如 <code>B*C</code> 时，表达式的形式使你能够正确理解它。在这种情况下，你知道 B 乘以 C, 因为乘法运算符 <code>*</code> 出现在表达式中。这种类型的符号称为中缀，因为运算符在它处理的两个操作数之间。看另外一个中缀示例，<code>A+B*C</code>，运算符 <code>+</code> 和 <code>*</code> 仍然出现在操作数之间。这里面有个问题是，他们分别作用于哪个运算数上，<code>+</code> 作用于 A 和 B , 还是 <code>*</code> 作用于 B 和 C？表达式似乎有点模糊。<a id="more"></a></p>
+<p>事实上，你已经读写过这些类型的表达式很长一段时间，所以它们对你不会导致什么问题。这是因为你知道运算符 <code>+</code>和 <code>*</code>。每个运算符都有一个优先级。优先级较高的运算符在优先级较低的运算符之前使用。唯一改变顺序的是括号的存在。算术运算符的优先顺序是将乘法和除法置于加法和减法之上。如果出现具有相等优先级的两个运算符，则使用从左到右的顺序排序或关联。</p>
+<p>我们使用运算符优先级来解释下表达式 <code>A+B*C</code>。B 和 C 首先相乘，然后将 A 与该结果相加。<code>(A+B)*C</code> 将强制在乘法之前执行 A 和 B 的加法。在表达式 <code>A+B+C</code> 中，最左边的 + 首先使用。</p>
+<p>虽然这一切对你来说都很明显。但请记住，计算机需要准确知道要执行的操作符和顺序。一种保证不会对操作顺序产生混淆的表达式的方法是创建一个称为完全括号表达式的表达式。这种类型的表达式对每个运算符都使用一对括号。括号没有歧义的指示操作的顺序。也没有必要记住任何优先规则。</p>
+<p>有两种非常重要的表达式格式，你可能一开始不会很明显的看出来。中缀表达式 <code>A+B</code>, 如果我们移动两个操作数之间的运算符会发生什么？结果表达式变成 <code>+ A B</code>。同样，我们也可以将运算符移动到结尾，得到 <code>A B +</code> ，这样看起来有点奇怪。</p>
+<p>改变操作符的位置得到了两种新的表达式格式，前缀和后缀。前缀表达式符号要求所有运算符在它们处理的两个操作数之前。另一个方面，后缀要求其操作符在相应的操作数之后。看下更多的例子 (见 Table 2)</p>
+<p><code>A+B*C</code> 将在前缀中写为 <code>+ A * B C</code> 。乘法运算符紧接在操作数 B 和 C 之前，表示 <code>*</code> 优先于 <code>+</code>。然后加法运算符出现在 A 和乘法的结果之前。</p>
+<p>在后缀中，表达式将是 <code>A B C * +</code>，再次，操作的顺序被保留，因为 <code>*</code> 紧接在 B 和 C 之后出现，表示 <code>*</code> 具有高优先级，<code>+</code> 优先级低。虽然操作符在它们各自的操作数前后移动，但是顺序相对于彼此保持完全相同。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table2.png" alt="image"></p>
+<p><em>table 2</em></p>
+<p>现在考虑中缀表达式 <code>(A + B) * C</code>，回想下，在这种情况下，中缀需要括号在乘法之前强制执行加法。然而，当 A+B 写到前缀中时，加法运算符简单的移动到操作数 <code>+ A B</code> 之前。这个操作的结果成为乘法的第一个操作数。乘法运算符移动到整个表达式的前面，得出 <code>* + A B C</code>，同样，在后缀 <code>A B +</code>中，强制先加法。可以直接对该结果和剩余的操作数 C 相乘。然后，得出后缀表达式为 <code>A B + C *</code>。</p>
+<p>再次考虑这三个表达式(见 Table 3)，括号不见了。为什么在前缀和后缀的时候不需要括号了呢？答案是操作符对于他们的操作数不再模糊，只有中缀才需要括号，前缀和后缀表达式的操作顺序完全由操作符的顺序决定。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table3.png" alt="image"></p>
+<p><em>table 3</em></p>
+<p>Table 4 展示了一些其他的例子</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.table4.png" alt="image"></p>
+<p><em>table 4</em></p>
+<h4 id="1-中缀表达式转换前缀和后缀"><a href="#1-中缀表达式转换前缀和后缀" class="headerlink" title="1.中缀表达式转换前缀和后缀"></a>1.中缀表达式转换前缀和后缀</h4><p>到目前为止，我们已经使用特定方法在中缀表达式和等效前缀和后缀表达式符号之间进行转换。正如你可能期望的，有一些算法来执行转换，允许任何复杂表达式转换。</p>
+<p>我们考虑的第一种技术使用前面讨论的完全括号表达式的概念。回想一下，<code>A + B * C</code>可以写成<code>（A +（B * C））</code>，以明确标识乘法优先于加法。然而，仔细观察，你可以看到每个括号对还表示操作数对的开始和结束，中间有相应的运算符。</p>
+<p>看上面的子表达式<code>（B * C）</code>中的右括号。如果我们将乘法符号移动到那个位置，并删除匹配的左括号，得到得到 <code>B C *</code>，我们实际上已经将子表达式转换为后缀符号。如果加法运算符也被移动到其相应的右括号位置并且匹配的左括号被去除，则将得到完整的后缀表达式。（见Figure 6）。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure6.png" alt="image"></p>
+<p><em>Figure 6</em></p>
+<p>如果我们不是将符号移动到右括号的位置，我们将它向左移动，我们得到前缀符号（见 Figure 7）。圆括号对的位置实际上是包含的运算符的最终未知的线索。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure7.png" alt="image"></p>
+<p><em>Figure 7</em></p>
+<p>所以为了转换表达式，无论是对前缀还是后缀符号，先根据操作的顺序把表达式转换成完全括号表达式。然后将包含的预算符移动到左或右括号的位置，具体取决于需要的前缀或后缀符号。</p>
+<p>这里面有个更复杂的例子， <code>(A + B) * C - (D - E) * (F + G)</code> ，Figure 8显示了如何转换为后缀和前缀。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure8.png" alt="image"></p>
+<p><em>Figure 8</em></p>
+<h4 id="1-中缀转后缀通用法"><a href="#1-中缀转后缀通用法" class="headerlink" title="1.中缀转后缀通用法"></a>1.中缀转后缀通用法</h4><p>我们需要开发一个算法来将任何中缀表达式转换为后缀表达式。为了做到这一点，我们仔细看看转换过程。</p>
+<p>再次考虑表达式 <code>A + B * C</code>。如上所示，<code>A B C * +</code>是等价的后缀表达式。 我们已经注意到，操作数A,B,C保持在它们的相对位置。只有操作符改变位置。再看中缀表达式中的运算符。从左到右出现的第一个运算符为+。然而，在后缀表达式中，+在结束位置，因为下一个运算符*的优先级高于加法。原始表达式中的运算符的顺序在生成的后缀表达式中相反。</p>
+<p>当我们处理表达式时，操作符必须保存在某处，因为它们相应的右操作数还没有看到。此外，这些保存的操作符的顺序可能由于它们的优先级而需要反转。这是在该示例中的加法和乘法的情况。由于加法运算符在乘法运算符之前，并且具有较低的优先级，因此需要在使用乘法运算符之后出现。由于这种顺序的反转，考虑使用栈来保存运算符知道用到它们是有意义的。</p>
+<p><code>(A + B)* C</code>的情况会是什么样呢？ 回想一下，<code>A B + C *</code>是等价的后缀表达式。从左到右处理此中缀表达式，我们先看到 <code>+</code>。 在这种情况下，当我们看到 <code>*</code>，<code>+</code>已经放置在结果表达式中，由于括号它的优先级高于<code>*</code>。 我们现在可以开始看看转换算法如何工作。当我们看到左括号时，我们保存它，表示高优先级的另一个运算符将出现。该操作符需要等到相应的右括号出现以表示其位置（回忆完全括号的算法）。 当右括号出现时，可以从栈中弹出操作符。</p>
+<p>当我们从左到右扫描中缀表达式时，我们将使用栈来保留运算符。这将提供我们在第一个例子中注意到的反转。 堆栈的顶部将始终是最近保存的运算符。每当我们读取一个新的运算符时，我们需要考虑该运算符如何与已经在栈上的运算符（如果有的话）比较优先级。</p>
+<p>假设中缀表达式是一个由空格分隔的标记字符串。 操作符标记是<code>*，/，+</code>和 <code>-</code> ，以及左右括号。操作数是单字符 A，B，C 等。 以下步骤将后缀顺序生成一个字符串。</p>
+<ol>
+<li>创建一个名为opstack的空栈以保存运算符。给输出创建一个空列表。</li>
+<li>通过使用字符串方法拆分将输入的中缀字符串转换为标记列表。</li>
+<li>从左到右扫描标记列表。<ul>
+<li>如果标记是操作数，将其附加到输出列表的末尾、</li>
+<li>如果标记是左括号，将其压到opstack上。</li>
+<li>如果标记是右括号，则弹出opstack，直到删除相应的左括号。将每个预算福附加到输出列表的末尾。</li>
+<li>如果标记是运算符，<code>*，/，+</code>或 <code>-</code> ，将其压入 opstack。但是，首先删除已经在 opstack 中具有更高或相等优先级的任何运算符，并将它们加到输出列表中。</li>
+</ul>
+</li>
+<li>当输入表达式被完全处理时，检查 opstack。仍然在栈上的任何运算符都可以删除并加到输出列表的末尾。</li>
+</ol>
+<p>Figure 9 展示了对表达式 <code>A * B + C * D</code> 的转换算法。注意，第一个 <code>*</code> 在看到 <code>+</code> 运算符时被删除。另外，当第二个 * 出现时， <code>+</code> 保留在栈中，因为乘法优先级高于加法。在中缀表达式的末尾，栈被弹出两次，删除两个运算符，并将 <code>+</code> 作为后缀表达式中的最后一个运算符。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure9.png" alt="image"></p>
+<p><em>Figure 9</em></p>
+<p>为了在 Python 中编写算法，我们使用一个名为 prec 的字典来保存操作符的优先级。这个字典将每个运算符映射到一个整数，可以与其他运算符的优先级（我们使用整数3，2和1）进行比较。左括号将赋予最低的值。这样，与其进行比较的任何运算符将具有更高的优先级，将被放置在它的顶部。第15行将操作数定义为任何大写字符或数字。完整的转换函数见 ActiveCode 1。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> pythonds.basic.stack <span class="keyword">import</span> Stack</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">infixToPostfix</span><span class="params">(infixexpr)</span>:</span></div><div class="line">    prec = &#123;&#125;</div><div class="line">    prec[<span class="string">"*"</span>] = <span class="number">3</span></div><div class="line">    prec[<span class="string">"/"</span>] = <span class="number">3</span></div><div class="line">    prec[<span class="string">"+"</span>] = <span class="number">2</span></div><div class="line">    prec[<span class="string">"-"</span>] = <span class="number">2</span></div><div class="line">    prec[<span class="string">"("</span>] = <span class="number">1</span></div><div class="line">    opStack = Stack()</div><div class="line">    postfixList = []</div><div class="line">    tokenList = infixexpr.split()</div><div class="line"></div><div class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> tokenList:</div><div class="line">        <span class="keyword">if</span> token <span class="keyword">in</span> <span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span> <span class="keyword">or</span> token <span class="keyword">in</span> <span class="string">"0123456789"</span>:</div><div class="line">            postfixList.append(token)</div><div class="line">        <span class="keyword">elif</span> token == <span class="string">'('</span>:</div><div class="line">            opStack.push(token)</div><div class="line">        <span class="keyword">elif</span> token == <span class="string">')'</span>:</div><div class="line">            topToken = opStack.pop()</div><div class="line">            <span class="keyword">while</span> topToken != <span class="string">'('</span>:</div><div class="line">                postfixList.append(topToken)</div><div class="line">                topToken = opStack.pop()</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">not</span> opStack.isEmpty()) <span class="keyword">and</span> \</div><div class="line">               (prec[opStack.peek()] &gt;= prec[token]):</div><div class="line">                  postfixList.append(opStack.pop())</div><div class="line">            opStack.push(token)</div><div class="line"></div><div class="line">    <span class="keyword">while</span> <span class="keyword">not</span> opStack.isEmpty():</div><div class="line">        postfixList.append(opStack.pop())</div><div class="line">    <span class="keyword">return</span> <span class="string">" "</span>.join(postfixList)</div><div class="line"></div><div class="line">print(infixToPostfix(<span class="string">"A * B + C * D"</span>))</div><div class="line">print(infixToPostfix(<span class="string">"( A + B ) * C - ( D - E ) * ( F + G )"</span>))</div></pre></td></tr></table></figure>
+<ol>
+<li>后缀表达式求值</li>
+</ol>
+<p>作为最后栈的示例，我们考虑对后缀符号中的表达式求值。在这种情况下，栈再次是我们选择的数据结构。但是，在扫描后缀表达式时，它必须等待操作数，而不像上面的转换算法中的运算符。解决问题的另一种方法是，每当在输入上看到运算符时，计算两个最近的操作数。</p>
+<p>要详细的了解这一点，考虑后缀表达式<code>4 5 6 * +</code>，首先遇到操作数<code>4</code> 和 <code>5</code>，此时你还不确定如何处理它们，直到看到下一个符号。将它们放置到栈上，确保它们在下一个操作符出现时可用。</p>
+<p>在这种情况下，下一个符号是另一个操作数。所以，像先前一样，压入栈中。并检查下一个符号。现在我们看到操作符<code>*</code>，这意味着需要将两个最近的操作数相乘。通过弹出栈两次，我们可以得到正确的两个操作数，然后执行乘法（这种情况下结果为30）。</p>
+<p>我们现在可以通过将其放回栈中来处理此结果，以便它可以表示为表达式后面的运算符的操作数。当处理最后一个操作符时，栈上只有一个值，弹出并返回它作为表达式的结果。Figure 10展示了整个示例表达式的栈的内容。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure10.png" alt="image"></p>
+<p><em>Figure 10</em></p>
+<p>Figure 11是个稍微复杂的示例，<code>7 8 + 3 2 + /</code> 。在这个例子中有两点需要注意，首先，栈的大小增长收缩，然后在子表达式求值的时候再次增长。第二，除法操作需要自信处理。回想下，后缀表达式的操作符顺序没变，仅仅改变操作符的位置。当用于除法的操作符从栈中弹出时，它们被反转。由于除法不是交换运算符，换句话说<code>15/5</code>和 <code>5/15</code> 不同，因此我们必须保证操作数的顺序不会交换。</p>
+<p><img src="https://facert.gitbooks.io/python-data-structure-cn/3.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/3.9.%E4%B8%AD%E7%BC%80%E5%89%8D%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F/assets/3.9.%E4%B8%AD%E7%BC%80%E5%90%8E%E7%BC%80%E5%92%8C%E5%90%8E%E7%BC%80%E8%A1%A8%E8%BE%BE%E5%BC%8F.figure11.png" alt="image"></p>
+<p><em>Figure 11</em></p>
+<p>假设后缀表达式是一个由空格分隔的标记字符串。 运算符为<code>*，/，+</code>和 <code>-</code> ，操作数假定为单个整数值。 输出将是一个整数结果。</p>
+<ol>
+<li>创建一个名为 <code>operandStack</code> 的空栈。</li>
+<li>拆分字符串转换为标记列表。</li>
+<li>从左到右扫描标记列表。<ul>
+<li>如果标记是操作数，将其从字符串转换为整数，并将值压到operandStack。</li>
+<li>如果标记是运算符<code>*，/，+</code>或<code>-</code>，它将需要两个操作数。弹出operandStack 两次。 第一个弹出的是第二个操作数，第二个弹出的是第一个操作数。执行算术运算后，将结果压到操作数栈中。</li>
+</ul>
+</li>
+<li>当输入的表达式被完全处理后，结果就在栈上，弹出 operandStack 并返回值。</li>
+</ol>
+<p>用于计算后缀表达式的完整函数见 ActiveCode 2，为了辅助计算，定义了一个函数 doMath, 它将获取两个操作数和运算符，执行相应的计算。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">+</div><div class="line"></div><div class="line"><span class="keyword">from</span> pythonds.basic.stack <span class="keyword">import</span> Stack</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">postfixEval</span><span class="params">(postfixExpr)</span>:</span></div><div class="line">    operandStack = Stack()</div><div class="line">    tokenList = postfixExpr.split()</div><div class="line"></div><div class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> tokenList:</div><div class="line">        <span class="keyword">if</span> token <span class="keyword">in</span> <span class="string">"0123456789"</span>:</div><div class="line">            operandStack.push(int(token))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            operand2 = operandStack.pop()</div><div class="line">            operand1 = operandStack.pop()</div><div class="line">            result = doMath(token,operand1,operand2)</div><div class="line">            operandStack.push(result)</div><div class="line">    <span class="keyword">return</span> operandStack.pop()</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">doMath</span><span class="params">(op, op1, op2)</span>:</span></div><div class="line">    <span class="keyword">if</span> op == <span class="string">"*"</span>:</div><div class="line">        <span class="keyword">return</span> op1 * op2</div><div class="line">    <span class="keyword">elif</span> op == <span class="string">"/"</span>:</div><div class="line">        <span class="keyword">return</span> op1 / op2</div><div class="line">    <span class="keyword">elif</span> op == <span class="string">"+"</span>:</div><div class="line">        <span class="keyword">return</span> op1 + op2</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> op1 - op2</div><div class="line"></div><div class="line">print(postfixEval(<span class="string">'7 8 + 3 2 + /'</span>))</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2017/10/27/中缀前缀和后缀表达式/">中缀前缀和后缀表达式</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 AdamZeng 的个人博客">AdamZeng</a></p>
+  <p><span>发布时间:</span>2017年10月27日 - 17:10</p>
+  <p><span>最后更新:</span>2017年10月27日 - 17:10</p>
+  <p><span>原始链接:</span><a href="/2017/10/27/中缀前缀和后缀表达式/" title="中缀前缀和后缀表达式">http://yoursite.com/2017/10/27/中缀前缀和后缀表达式/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2017/10/27/中缀前缀和后缀表达式/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>感谢给位朋友们支持！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/pay/wechat-qcode.jpg" alt="AdamZeng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/pay/ali.jpg" alt="AdamZeng Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/27/十进制转换成二进制/" rel="next" title="十进制转换成二进制">
+                <i class="fa fa-chevron-left"></i> 十进制转换成二进制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="SOHUCS" ></div>
+    
+  </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload/head.jpg"
+               alt="AdamZeng" />
+          <p class="site-author-name" itemprop="name">AdamZeng</p>
+           
+              <p class="site-description motion-element" itemprop="description">Python与web相关分享</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/AdamZeng1" rel="external nofollow" target="_blank" title="GitHub">
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.github.com" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.jianshu.com/" title="简书" target="_blank">简书</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=120 src="//music.163.com/outchain/player?type=2&id=293043&auto=1&height=66"></iframe>
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-中缀表达式转换前缀和后缀"><span class="nav-number">1.</span> <span class="nav-text">1.中缀表达式转换前缀和后缀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-中缀转后缀通用法"><span class="nav-number">2.</span> <span class="nav-text">1.中缀转后缀通用法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">AdamZeng</span>
+</div>
+
+
+
+<div class="powered-by">
+  由 <a rel="external nofollow" class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" rel="external nofollow" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+  
+     <script type="text/javascript"> 
+    (function(){ 
+    var appid = 'cyt5gr922'; 
+    var conf = '0b7e09b5029f21ee0f054d0ab01246b4'; 
+    var width = window.innerWidth || document.documentElement.clientWidth; 
+    if (width < 960) { 
+    window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+     <script type="text/javascript"> 
+    (function(){ 
+    var appid = 'cyt5gr922'; 
+    var conf = '0b7e09b5029f21ee0f054d0ab01246b4'; 
+    var width = window.innerWidth || document.documentElement.clientWidth; 
+    if (width < 960) { 
+    window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    <script type="text/javascript" src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  <script type="text/javascript"
+color="0,0,255" opacity='0.7' zIndex="-2" count="100"
+  src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/src/love.js"></script>
+</body>
+
+</html>
